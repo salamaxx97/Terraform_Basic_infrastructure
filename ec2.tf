@@ -50,7 +50,7 @@ resource "aws_vpc_security_group_egress_rule" "privaate_allow_outbound" {
 }
 
 # Public EC2 instance with Nginx
-resource "aws_instance" " public" {
+resource "aws_instance" "public" {
   ami                    = var.ami
   instance_type          = var.instance_type
   subnet_id              = aws_subnet.public.id
