@@ -29,3 +29,11 @@ resource "aws_dynamodb_table" "terraform_locks" {
     Name        = "Terraform State Lock Table"
   }
 }
+terraform {
+  backend "s3" {
+    bucket         = "salama-state-bucket"
+    key            = "terraform.tfstate"
+    dynamodb_table = "terraform-state-locks"
+    region         = "us-east-1"
+}
+}
