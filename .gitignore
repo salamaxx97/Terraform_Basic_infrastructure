@@ -1,2 +1,3 @@
 .trraform/*
 .terraform*
+terraform.tfstate
