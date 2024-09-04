@@ -65,7 +65,7 @@ resource "aws_instance" "public" {
               echo 'server {
                       listen 80;
                       location / {
-                          proxy_pass http://${aws_instance.apache_private.private_ip};
+                          proxy_pass http://${aws_instance.private.private_ip};
                       }
               }' > /etc/nginx/sites-available/default
               ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/
