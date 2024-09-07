@@ -1,34 +1,38 @@
-variable "aws_region"{
-    default = "us-east-1"
+variable "aws_region" {
+  default = "us-east-1"
 }
 
-variable "aws_profile"{
-    default = "default"
+variable "aws_profile" {
+  default = "default"
 }
 
-variable "vpc_cidr"{
-    type = string 
+variable "vpc_cidr" {
+  type = string
 }
 
-variable "public_subnet_cidr" {
-    type = string 
+variable "subnet_cidrs" {
+  type = map(list(string))
 }
-variable "private_subnet_cidr" {
-    type = string 
+
+variable "security_groups" {
+  type = map(any)
 }
-variable "private_availability_zone" {
-    type = string 
+
+variable "availability_zones" {
+  type = list(any)
 }
-variable "public_availability_zone" {
-    type = string 
+
+variable "instances" {
+  type = map(any)
 }
+
 variable "ami" {
-    type = string 
+  type = string
 }
 variable "instance_type" {
-    type = string 
+  type = string
 }
 
 # variable "user_data" {
-#     type = string 
+#   type = map(any)
 # }

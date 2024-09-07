@@ -14,11 +14,11 @@ resource "aws_s3_bucket_versioning" "terraform_state_bucket" {
 }
 
 resource "aws_dynamodb_table" "terraform_locks" {
-  name         = "terraform-state-locks"
-  billing_mode   = "PROVISIONED"   # Use provisioned mode for free tier eligibility
-  read_capacity  = 1               # 1 RCU to stay within free tier
-  write_capacity = 1               # 1 WCU to stay within free tier
-  hash_key     = "LockID"
+  name           = "terraform-state-locks"
+  billing_mode   = "PROVISIONED" # Use provisioned mode for free tier eligibility
+  read_capacity  = 1             # 1 RCU to stay within free tier
+  write_capacity = 1             # 1 WCU to stay within free tier
+  hash_key       = "LockID"
 
   attribute {
     name = "LockID"
@@ -26,7 +26,7 @@ resource "aws_dynamodb_table" "terraform_locks" {
   }
 
   tags = {
-    Name        = "Terraform State Lock Table"
+    Name = "Terraform State Lock Table"
   }
 }
 terraform {
@@ -35,5 +35,5 @@ terraform {
     key            = "terraform.tfstate"
     dynamodb_table = "terraform-state-locks"
     region         = "us-east-1"
-}
+  }
 }
