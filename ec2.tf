@@ -8,11 +8,11 @@ resource "aws_security_group" "SG" {
   }
 }
 
-# Ingress rule for public security group to allow HTTP traffic from anywhere
-resource "aws_security_group_rule" "public_ingress_http" {
+# Ingress rule for public security group to allow ssh traffic from anywhere
+resource "aws_security_group_rule" "public_ingress_ssh" {
   type        = "ingress"
-  from_port   = 80
-  to_port     = 80
+  from_port   = 22
+  to_port     = 22
   protocol    = "tcp"
   cidr_blocks = ["0.0.0.0/0"]
 
@@ -25,11 +25,11 @@ resource "aws_security_group_rule" "public_ingress_http" {
   depends_on = [aws_security_group.SG]
 }
 
-# Ingress rule for private security group to allow HTTP traffic from public security group
-resource "aws_security_group_rule" "private_ingress_http" {
+# Ingress rule for private security group to allow ssh traffic from public security group
+resource "aws_security_group_rule" "private_ingress_ssh" {
   type                     = "ingress"
-  from_port                = 80
-  to_port                  = 80
+  from_port                = 22
+  to_port                  = 22
   protocol                 = "tcp"
   source_security_group_id = aws_security_group.SG["public"].id
 
@@ -61,49 +61,18 @@ resource "aws_security_group_rule" "all_egress" {
 }
 
 
-# # Public EC2 instance with Nginx
-# resource "aws_instance" "public" {
-#   ami                    = var.ami
-#   instance_type          = var.instance_type
-#   subnet_id              = aws_subnet.public.id
-#   security_groups        = [aws_security_group.public.id]
-#   associate_public_ip_address = true
+# Public EC2 instance with Nginx
+resource "aws_instance" "instance" {
+  for_each                    = var.instances
+  ami                         = var.ami
+  instance_type               = var.instance_type
+  subnet_id                   = aws_subnet.subnets[each.key].id
+  security_groups             = [aws_security_group.SG[each.key].id]
+  associate_public_ip_address = each.value[1]
+  key_name = aws_key_pair.kp.key_name
 
-#   user_data = <<-EOF
-#               #!/bin/bash
-#               apt-get update
-#               apt-get install -y nginx
-#               rm /etc/nginx/sites-enabled/default
-#               echo 'server {
-#                       listen 80;
-#                       location / {
-#                           proxy_pass http://${aws_instance.private.private_ip};
-#                       }
-#               }' > /etc/nginx/sites-available/default
-#               ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/
-#               systemctl restart nginx
-#               EOF
+  tags = {
+    Name = each.value[0]
+  }
+}
 
-#   tags = {
-#     Name = "NginxPublicInstance"
-#   }
-# }
-
-# # Private EC2 instance with Apache
-# resource "aws_instance" "private" {
-#   ami                    = var.ami
-#   instance_type          = var.instance_type
-#   subnet_id              = aws_subnet.private.id
-#   security_groups        = [aws_security_group.private.id]
-#   user_data = <<-EOF
-#               #!/bin/bash
-#               apt-get update
-#               apt-get install -y a pache2
-#               echo "Hello from $(hostname)" > /var/www/html/index.html
-#               systemctl restart apache2
-#               EOF
-
-#   tags = {
-#     Name = "ApachePrivateInstance"
-#   }
-# }
